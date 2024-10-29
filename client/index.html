@@ -7,26 +7,34 @@
     <link rel="stylesheet" href="./style.css" />
     <script type="module" src="./app.js" defer></script>
   </head>
+  
   <body>
     <!-- header -->
     <section class="header">
       <h1>Quiz Quest Game</h1>
     </section>
+    
     <!-- main content -->
-    <section class="main-content">
-      <div class="life-line-bar">
-        <button>Hint</button>
-        <button>50/50</button>
-        <button>Ask the audience</button>
-      </div>
-      <!-- question & answer container -->
-      <div id="quiz-container"></div>
-      <!-- side bar -->
-      <div class="side-bar">
-        <p>Question <span>1</span>/10</p>
+  <div class="display-container">
+    
+    <!-- lifeline container -->
+    <div class="lifeline-container">
+      <p>Hint</p>
+      <p>50/50</p>
+      <p>Ask the audience</p>
+    </div>
+    
+    <!-- question & answer container -->
+    <div class="question-container" id="quiz-container"></div>
+    
+    <!-- side bar -->
+    <div class="status-container">
+       <p>Question <span>1</span>/10</p>
         <p>Lives: <span>3</span></p>
         <p>Score: <span>0</span>pts</p>
-      </div>
-    </section>
+    </div>
+    
+  </div>
+    
   </body>
 </html>
