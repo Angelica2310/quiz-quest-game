@@ -14,7 +14,7 @@ let questions = [];
 // Function to fetch questions and answers and display them
 async function easyQuiz() {
   const response = await fetch(
-    "http://localhost:8080/questions?difficulty=easy"
+    "https://quiz-quest-game-server.onrender.com/questions?difficulty=easy"
   );
   const quiz = await response.json();
   questions = quiz;
