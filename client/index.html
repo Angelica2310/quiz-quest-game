@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz Quest Game</title>
-    <link rel="stylesheet" href="./style.css" />
-    <script type="module" src="./app.js" defer></script>
-  </head>
-  <body>
-    <h1>Quiz Quest Game</h1>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Quest Game</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="module" src="./app.js" defer></script>
+</head>
+
+
+
+<body>
+  <header>
+    <h1>Quiz Quest</h1>
+  </header>
+  <div class="display-container">
+    <form class="question-container">
+      <p>Question 1</p>
+      <button>Option A</button>
+      <button>Option B</button>
+      <button>Option C</button>
+      <button>Option D</button>
+    </form>
+
+    <div class="lifeline-container">
+      <p>Hint</p>
+      <p>50/50</p>
+      <p>Ask the audience</p>
+    </div>
+
+    <div class="status-container">
+      <p>Question 1/10</p>
+      <p>Lives:3</p>
+      <p>Score: 0pts</p>
+    </div>
+
+  </div>
+
+</body>
+
 </html>
