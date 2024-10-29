@@ -1,61 +1,69 @@
 const quizContainer = document.getElementById("quiz-container");
-
+const nextBtn = document.getElementById("next-btn");
+let currentQuestionIndex = 0;
+const questionText = document.getElementById("question-text");
+const optionA = document.getElementById("option-a");
+const optionB = document.getElementById("option-b");
+const optionC = document.getElementById("option-c");
+const optionD = document.getElementById("option-d");
+const labelA = document.getElementById("label-a");
+const labelB = document.getElementById("label-b");
+const labelC = document.getElementById("label-c");
+const labelD = document.getElementById("label-d");
+let questions = [];
 // Function to fetch questions and answers and display them
-async function getQuiz1() {
-  const response = await fetch("http://localhost:8080/question1");
-  const quiz1 = await response.json();
-
+async function easyQuiz() {
+  const response = await fetch(
+    "http://localhost:8080/questions?difficulty=easy"
+  );
+  const quiz = await response.json();
+  questions = quiz;
+  displayQuestion();
+}
+//   for (let i = 0; i < quiz.length; i++) {
+//     const question = quiz[i].question;
+//     const option_a = quiz[i].option_a;
+//     const option_b = quiz[i].option_b;
+//     const option_c = quiz[i].option_c;
+//     const option_d = quiz[i].option_d;
+//   }
+function displayQuestion() {
   // Select a random question
-  const randomIndex = Math.floor(Math.random() * quiz1.length);
-  const question = quiz1[randomIndex].question;
-  const options = [
-    quiz1[randomIndex].option_a,
-    quiz1[randomIndex].option_b,
-    quiz1[randomIndex].option_c,
-    quiz1[randomIndex].option_d,
-  ];
-  const correctAnswer = quiz1[randomIndex].correct_answer;
 
-  // Clear previous question
-  quizContainer.innerHTML = "";
+  const question = questions[currentQuestionIndex].question;
 
-  // Create element for each questions and its answers
-  const questionContainer = document.createElement("div");
-  questionContainer.classList.add("question");
+  let correctAnswer = questions[currentQuestionIndex].correct_answer;
+  console.log(correctAnswer);
 
-  const questionText = document.createElement("h3");
   questionText.textContent = question;
-  questionContainer.appendChild(questionText);
 
-  // Create 4 choices of answer
-  options.forEach((option) => {
-    const optionContainer = document.createElement("div");
-    const optionText = document.createElement("input");
-    optionText.type = "radio";
-    optionText.name = "question";
-    optionText.value = option;
+  optionA.value = questions[currentQuestionIndex].option_a;
+  labelA.textContent = questions[currentQuestionIndex].option_a;
 
-    const optionLabel = document.createElement("label");
-    optionLabel.textContent = option;
+  optionB.value = questions[currentQuestionIndex].option_b;
+  labelB.textContent = questions[currentQuestionIndex].option_b;
 
-    optionContainer.appendChild(optionText);
-    optionContainer.appendChild(optionLabel);
-    questionContainer.appendChild(optionContainer);
+  optionC.value = questions[currentQuestionIndex].option_c;
+  labelC.textContent = questions[currentQuestionIndex].option_c;
 
-    // Add event listener to check if the answer is correct
-    optionText.addEventListener("change", async () => {
-      if (optionText.value === correctAnswer) {
-        console.log("correct, fetch");
-        // Fetch and display next question
-        await fetch("http://localhost:8080/question2");
-      } else {
-        alert("Incorrect answer! Try again.");
-      }
-    });
-  });
-
-  // Append the question container to the main quiz container
-  quizContainer.appendChild(questionContainer);
+  optionD.value = questions[currentQuestionIndex].option_d;
+  labelD.textContent = questions[currentQuestionIndex].option_d;
+}
+async function handleClick(event) {
+  if (event.target.value === questions[currentQuestionIndex].correct_answer) {
+    console.log("correct, fetch");
+    currentQuestionIndex++;
+    displayQuestion();
+    // Fetch and display next question
+  } else {
+    alert("Incorrect answer! Try again.");
+  }
 }
 
-getQuiz1();
+// Add event listener to check if the answer is correct
+optionA.addEventListener("click", handleClick);
+optionB.addEventListener("click", handleClick);
+optionC.addEventListener("click", handleClick);
+optionD.addEventListener("click", handleClick);
+
+easyQuiz();

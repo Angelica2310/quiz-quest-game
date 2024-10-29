@@ -7,34 +7,46 @@
     <link rel="stylesheet" href="./style.css" />
     <script type="module" src="./app.js" defer></script>
   </head>
-  
+
   <body>
     <!-- header -->
     <section class="header">
       <h1>Quiz Quest Game</h1>
     </section>
-    
+
     <!-- main content -->
-  <div class="display-container">
-    
-    <!-- lifeline container -->
-    <div class="lifeline-container">
-      <p>Hint</p>
-      <p>50/50</p>
-      <p>Ask the audience</p>
-    </div>
-    
-    <!-- question & answer container -->
-    <div class="question-container" id="quiz-container"></div>
-    
-    <!-- side bar -->
-    <div class="status-container">
-       <p>Question <span>1</span>/10</p>
+    <div class="display-container">
+      <!-- lifeline container -->
+      <div class="lifeline-container">
+        <p>Hint</p>
+        <p>50/50</p>
+        <p>Ask the audience</p>
+      </div>
+
+      <!-- question & answer container -->
+      <div class="question-container" id="quiz-container">
+        <div class="question">
+          <h3 id="question-text"></h3>
+          <div>
+            <label id="label-a"></label>
+            <input id="option-a" type="radio" name="question" />
+            <label id="label-b"></label>
+            <input id="option-b" type="radio" name="question" />
+            <label id="label-c"></label>
+            <input id="option-c" type="radio" name="question" />
+            <label id="label-d"></label>
+            <input id="option-d" type="radio" name="question" />
+          </div>
+        </div>
+      </div>
+      <button id="next-btn">Next Question</button>
+
+      <!-- side bar -->
+      <div class="status-container">
+        <p>Question <span>1</span>/10</p>
         <p>Lives: <span>3</span></p>
         <p>Score: <span>0</span>pts</p>
+      </div>
     </div>
-    
-  </div>
-    
   </body>
 </html>
