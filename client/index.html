@@ -7,34 +7,40 @@
     <link rel="stylesheet" href="./style.css" />
     <script type="module" src="./app.js" defer></script>
   </head>
-  
+
   <body>
-    <!-- header -->
-    <section class="header">
-      <h1>Quiz Quest Game</h1>
-    </section>
-    
-    <!-- main content -->
-  <div class="display-container">
-    
-    <!-- lifeline container -->
-    <div class="lifeline-container">
-      <p>Hint</p>
-      <p>50/50</p>
-      <p>Ask the audience</p>
+    <div id="quiz-container">
+      <!-- Start Screen -->
+      <div id="start-screen">
+        <h1>Welcome to the Quiz!</h1>
+        <p>Answer each question and use lifelines wisely. Good luck!</p>
+        <button id="start-btn">Start Quiz</button>
+      </div>
+
+      <!-- Quiz Screen -->
+      <div id="quiz-screen" style="display: none">
+        <div id="lifelines">
+          <button id="hint-btn">Hint</button>
+          <button id="fifty-fifty-btn">50/50</button>
+          <button id="audience-btn">Ask the Audience</button>
+        </div>
+        <div id="question-section">
+          <h2 id="question-text"></h2>
+          <div id="answer-options"></div>
+          <button id="next-btn" style="display: none">Next Question</button>
+        </div>
+        <div id="progress">
+          <p id="question-counter">Question 1/10</p>
+          <p id="lives-counter">Lives: <span id="lives">3</span></p>
+        </div>
+      </div>
+
+      <!-- End Screen -->
+      <div id="end-screen" style="display: none">
+        <h2>Quiz Complete!</h2>
+        <p id="final-score"></p>
+        <button id="restart-btn">Restart Quiz</button>
+      </div>
     </div>
-    
-    <!-- question & answer container -->
-    <div class="question-container" id="quiz-container"></div>
-    
-    <!-- side bar -->
-    <div class="status-container">
-       <p>Question <span>1</span>/10</p>
-        <p>Lives: <span>3</span></p>
-        <p>Score: <span>0</span>pts</p>
-    </div>
-    
-  </div>
-    
   </body>
 </html>
