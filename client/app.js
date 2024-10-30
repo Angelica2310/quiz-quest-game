@@ -37,7 +37,7 @@ function startQuiz() {
 // Fetch question from the server
 async function getQuestion() {
   const response = await fetch(
-    `http://localhost:8080/question${currentQuestionIndex + 1}`
+    `https://quiz-quest-game-server.onrender.com/question${currentQuestionIndex + 1}`
   );
   const questions = await response.json();
   const randomIndex = Math.floor(Math.random() * questions.length);
