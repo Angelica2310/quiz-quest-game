@@ -12,7 +12,16 @@
     <!-- header -->
     <section class="header">
       <h1>Quiz Quest Game</h1>
+      <button class="home-btn">Home</button>
     </section>
+
+    <!-- game level button -->
+    <div class="level-btn">
+      <button class="easy-btn">Easy</button>
+      <button class="medium-btn">Medium</button>
+      <button class="hard-btn">Hard</button>
+      <button class="extremelyhard-btn">Extremely Hard</button>
+    </div>
 
     <!-- main content -->
     <div class="display-container">
@@ -39,13 +48,12 @@
           </div>
         </div>
       </div>
-      <button id="next-btn">Next Question</button>
 
       <!-- side bar -->
       <div class="status-container">
-        <p>Question <span>1</span>/10</p>
+        <p>Question <span class="question-number">1</span>/10</p>
         <p>Lives: <span>3</span></p>
-        <p>Score: <span>0</span>pts</p>
+        <p>Score: <span class="score">0</span>pts</p>
       </div>
     </div>
   </body>
