@@ -8,25 +8,21 @@ app.use(cors());
 app.use(express.json());
 dotenv.config();
 
-app.get("/", function (request, response) {
+const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+app.get("/", (request, response) => {
   response.json("Main root!");
 });
 
-const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-
-app.get("/questions", async function (request, response) {
-  const result = await db.query("SELECT * FROM quiz_quest");
-  let questions = result.rows;
-
-  const easyQuestion = request.query.difficulty;
-  if (easyQuestion) {
-    questions = questions.filter(function (question) {
-      return question.difficulty === easyQuestion;
-    });
-  }
+// Dynamic endpoint to fetch questions
+app.get("/question:questionNumber", async (request, response) => {
+  const questionNumber = request.params.questionNumber;
+  const result = await db.query(`SELECT * FROM quiz_quest_${questionNumber}`);
+  const questions = result.rows;
   response.json(questions);
 });
 
-app.listen(8080, function () {
+app.listen(8080, () => {
+  
   console.log("App is running on PORT 8080");
 });

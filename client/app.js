@@ -1,69 +1,124 @@
 const quizContainer = document.getElementById("quiz-container");
-const nextBtn = document.getElementById("next-btn");
-let currentQuestionIndex = 0;
+const startScreen = document.getElementById("start-screen");
+const quizScreen = document.getElementById("quiz-screen");
+const endScreen = document.getElementById("end-screen");
 const questionText = document.getElementById("question-text");
-const optionA = document.getElementById("option-a");
-const optionB = document.getElementById("option-b");
-const optionC = document.getElementById("option-c");
-const optionD = document.getElementById("option-d");
-const labelA = document.getElementById("label-a");
-const labelB = document.getElementById("label-b");
-const labelC = document.getElementById("label-c");
-const labelD = document.getElementById("label-d");
-let questions = [];
-// Function to fetch questions and answers and display them
-async function easyQuiz() {
+const answerOptions = document.getElementById("answer-options");
+const questionCounter = document.getElementById("question-counter");
+const livesCounter = document.getElementById("lives");
+const nextButton = document.getElementById("next-btn");
+const startButton = document.getElementById("start-btn");
+let currentQuestionIndex = 0;
+let lives = 3;
+let score = 0;
+
+// Hint elements
+const hintButton = document.getElementById("hint-btn");
+const hintDisplay = document.createElement("p");
+hintDisplay.id = "hint-display";
+document.getElementById("question-section").appendChild(hintDisplay);
+
+// Event listener for starting the quiz
+startButton.addEventListener("click", startQuiz);
+
+// Start the quiz
+function startQuiz() {
+  startScreen.style.display = "none";
+  quizScreen.style.display = "block";
+  currentQuestionIndex = 0;
+  lives = 3;
+  score = 0;
+  livesCounter.textContent = lives;
+  hintButton.disabled = false;
+  hintDisplay.textContent = "";
+  getQuestion();
+}
+
+// Fetch question from the server
+async function getQuestion() {
   const response = await fetch(
-    "https://quiz-quest-game-server.onrender.com/questions?difficulty=easy"
+    `https://quiz-quest-game-server.onrender.com/question${currentQuestionIndex + 1}`
   );
-  const quiz = await response.json();
-  questions = quiz;
-  displayQuestion();
+  const questions = await response.json();
+  const randomIndex = Math.floor(Math.random() * questions.length);
+  const question = questions[randomIndex];
+
+  questionText.textContent = question.question;
+  answerOptions.innerHTML = "";
+  hintDisplay.textContent = "";
+  const options = [
+    { text: question.option_a, value: "A" },
+    { text: question.option_b, value: "B" },
+    { text: question.option_c, value: "C" },
+    { text: question.option_d, value: "D" },
+  ];
+
+  options.forEach((option) => {
+    const button = document.createElement("button");
+    button.className = "answer-btn";
+    button.textContent = option.text;
+    button.setAttribute("data-option", option.value);
+    button.addEventListener("click", (e) =>
+      handleAnswerSelection(e, question.correct_answer)
+    );
+    answerOptions.appendChild(button);
+  });
+
+  questionCounter.textContent = `Question ${currentQuestionIndex + 1}/10`;
+
+  hintButton.addEventListener("click", () => {
+    hintDisplay.textContent = question.hint;
+    hintButton.disabled = true;
+  });
 }
-//   for (let i = 0; i < quiz.length; i++) {
-//     const question = quiz[i].question;
-//     const option_a = quiz[i].option_a;
-//     const option_b = quiz[i].option_b;
-//     const option_c = quiz[i].option_c;
-//     const option_d = quiz[i].option_d;
-//   }
-function displayQuestion() {
-  // Select a random question
 
-  const question = questions[currentQuestionIndex].question;
+// Handle answer selection
+function handleAnswerSelection(e, correctAnswer) {
+  const selectedOption = e.target.getAttribute("data-option");
 
-  let correctAnswer = questions[currentQuestionIndex].correct_answer;
-  console.log(correctAnswer);
-
-  questionText.textContent = question;
-
-  optionA.value = questions[currentQuestionIndex].option_a;
-  labelA.textContent = questions[currentQuestionIndex].option_a;
-
-  optionB.value = questions[currentQuestionIndex].option_b;
-  labelB.textContent = questions[currentQuestionIndex].option_b;
-
-  optionC.value = questions[currentQuestionIndex].option_c;
-  labelC.textContent = questions[currentQuestionIndex].option_c;
-
-  optionD.value = questions[currentQuestionIndex].option_d;
-  labelD.textContent = questions[currentQuestionIndex].option_d;
-}
-async function handleClick(event) {
-  if (event.target.value === questions[currentQuestionIndex].correct_answer) {
-    console.log("correct, fetch");
-    currentQuestionIndex++;
-    displayQuestion();
-    // Fetch and display next question
+  if (selectedOption === correctAnswer) {
+    e.target.classList.add("correct");
+    score++;
   } else {
-    alert("Incorrect answer! Try again.");
+    e.target.classList.add("incorrect");
+    lives--;
+    livesCounter.textContent = lives;
+  }
+
+  // Disable all answer buttons
+  const answerButtons = document.querySelectorAll(".answer-btn");
+  answerButtons.forEach((btn) => (btn.disabled = true));
+
+  // Show the next button
+  nextButton.style.display = "block";
+
+  // End quiz if lives are 0 or all questions are answered
+  if (lives === 0 || currentQuestionIndex === 9) {
+    endQuiz();
   }
 }
 
-// Add event listener to check if the answer is correct
-optionA.addEventListener("click", handleClick);
-optionB.addEventListener("click", handleClick);
-optionC.addEventListener("click", handleClick);
-optionD.addEventListener("click", handleClick);
+// Move to the next question
+nextButton.addEventListener("click", () => {
+  if (lives > 0) {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < 10) {
+      getQuestion();
+      nextButton.style.display = "none";
+    } else {
+      endQuiz();
+    }
+  }
+});
 
-easyQuiz();
+// End the quiz
+function endQuiz() {
+  quizScreen.style.display = "none";
+  endScreen.style.display = "block";
+  document.getElementById(
+    "final-score"
+  ).textContent = `You completed the quiz with ${lives} lives left and a score of ${score}!`;
+}
+
+// Restart the quiz
+document.getElementById("restart-btn").addEventListener("click", startQuiz);
