@@ -1,20 +1,20 @@
-const quizContainer = document.getElementById("quiz-container");
+let quizContainer = document.getElementById("quiz-container");
 
 // Function to fetch questions and answers and display them
-async function getQuiz1() {
-  const response = await fetch("http://localhost:8080/question1");
-  const quiz1 = await response.json();
+async function getQuiz() {
+  const response = await fetch("http://localhost:8080/random-questions");
+  const quiz = await response.json();
 
   // Select a random question
-  const randomIndex = Math.floor(Math.random() * quiz1.length);
-  const question = quiz1[randomIndex].question;
-  const options = [
-    quiz1[randomIndex].option_a,
-    quiz1[randomIndex].option_b,
-    quiz1[randomIndex].option_c,
-    quiz1[randomIndex].option_d,
-  ];
-  const correctAnswer = quiz1[randomIndex].correct_answer;
+  // const randomIndex = Math.floor(Math.random() * quiz1.length);
+  // const question = quiz1[randomIndex].question;
+  // const options = [
+  //   quiz1[randomIndex].option_a,
+  //   quiz1[randomIndex].option_b,
+  //   quiz1[randomIndex].option_c,
+  //   quiz1[randomIndex].option_d,
+  // ];
+  // const correctAnswer = quiz1[randomIndex].correct_answer;
 
   // Clear previous question
   quizContainer.innerHTML = "";
@@ -43,19 +43,19 @@ async function getQuiz1() {
     questionContainer.appendChild(optionContainer);
 
     // Add event listener to check if the answer is correct
-    optionText.addEventListener("change", async () => {
-      if (optionText.value === correctAnswer) {
-        console.log("correct, fetch");
-        // Fetch and display next question
-        await fetch("http://localhost:8080/question2");
-      } else {
-        alert("Incorrect answer! Try again.");
-      }
-    });
+    // optionText.addEventListener("change", async () => {
+    //   if (optionText.value === correctAnswer) {
+    //     console.log("correct, fetch");
+    //     // Fetch and display next question
+    //     await fetch("http://localhost:8080/question2");
+    //   } else {
+    //     alert("Incorrect answer! Try again.");
+    //   }
+    // });
   });
 
   // Append the question container to the main quiz container
   quizContainer.appendChild(questionContainer);
 }
 
-getQuiz1();
+getQuiz();
