@@ -23,6 +23,39 @@ app.get("/question:questionNumber", async (request, response) => {
 });
 
 app.listen(8080, () => {
-  
   console.log("App is running on PORT 8080");
+});
+
+// POST request to insert name and score into database
+app.post("/leaderboard", async function (request, response) {
+  const { name, score } = request.body;
+  console.log(name, score);
+  const result = await db.query(
+    "INSERT INTO leaderboard(name, score) VALUES ($1, $2) RETURNING id",
+    [name, score]
+  );
+  response.json(result.rows[0]);
+});
+
+// GET request to get name and score from database
+app.get("/leaderboard", async function (request, response) {
+  const result = await db.query(
+    "SELECT * FROM leaderboard ORDER BY score DESC"
+  );
+  response.json(result.rows);
+});
+
+// PUT request to update score in database
+app.put("/leaderboard/:id", async function (request, response) {
+  const { id } = request.params;
+  const { score } = request.body;
+  console.log(id, score);
+  const result = await db.query(
+    "UPDATE leaderboard SET score = $1 WHERE id = $2",
+    [score, id]
+  );
+  if (result.rowCount === 0) {
+    return response.json({ error: "Score not found" });
+  }
+  response.json({ message: "Score updated!" });
 });

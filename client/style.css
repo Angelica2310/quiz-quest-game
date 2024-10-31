@@ -12,23 +12,37 @@ body {
   align-items: center;
   min-height: 100vh;
   background-color: #f4f4f9;
-  color: #333;
+  color: white;
+}
+
+.video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2;
 }
 
 #quiz-container {
   width: 100%;
   max-width: 600px;
   padding: 20px;
-  background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   text-align: center;
   transition: transform 0.3s ease;
+  backdrop-filter: blur(20px);
+}
+
+/* #leaderboard:hover {
+  transform: scale(1.02);
 }
 
 #quiz-container:hover {
   transform: scale(1.02);
-}
+} */
 
 /* Start Screen */
 #start-screen {
@@ -38,13 +52,19 @@ body {
 #start-screen h1 {
   font-size: 2.5em;
   margin-bottom: 10px;
-  color: #333;
+  color: #00c9bb;
 }
 
 #start-screen p {
   margin-bottom: 20px;
   font-size: 1.2em;
-  color: #666;
+  color: white;
+}
+
+#name-form input {
+  background-color: #fefedf;
+  border: none;
+  height: 20px;
 }
 
 button {
@@ -53,17 +73,18 @@ button {
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
-  color: white;
+  background-color: #fefedf;
+  color: black;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #ffc0ff;
   transform: scale(1.05);
 }
 
 /* Quiz Screen */
+
 #quiz-screen {
   display: flex;
   flex-direction: column;
@@ -78,12 +99,17 @@ button:hover {
 }
 
 #lifelines button {
-  background-color: #6c757d;
+  background-color: #00c9bb;
+}
+
+#lifelines button:hover {
+  background-color: #fefedf;
 }
 
 #lifelines button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+  color: white;
 }
 
 #question-section {
@@ -105,15 +131,15 @@ button:hover {
 .answer-btn {
   padding: 12px;
   font-size: 1em;
-  border: 2px solid #007bff;
+  border: 2px solid #8e539d;
   border-radius: 5px;
-  background-color: rgb(27, 80, 135);
+  background-color: #ffc0ff;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .answer-btn:hover {
-  background-color: #e0e7ff;
+  background-color: #fefedf;
 }
 
 .answer-btn.correct {
@@ -134,15 +160,17 @@ button:hover {
   margin-top: 15px;
   display: inline-block;
   font-size: 1em;
-  background-color: #ffc107;
+  background-color: #8e539d;
   border: none;
+  color: white;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 #next-btn:hover {
-  background-color: #e0a800;
+  background-color: #fefedf;
+  color: black;
 }
 
 /* Progress Section */
@@ -150,25 +178,105 @@ button:hover {
   display: flex;
   justify-content: space-between;
   font-size: 1.1em;
-  color: #666;
+  color: white;
 }
 
 /* End Screen */
 #end-screen h2 {
   font-size: 2em;
-  color: #333;
+  color: #00c9bb;
   margin-bottom: 15px;
 }
 
 #end-screen p {
   font-size: 1.2em;
   margin-bottom: 20px;
+  color: white;
 }
 
 #restart-btn {
-  background-color: #28a745;
+  background-color: #ffc0ff;
 }
 
 #restart-btn:hover {
-  background-color: #218838;
+  background-color: #00c9bb;
+}
+
+#result-btn:hover {
+  background-color: #00c9bb;
+}
+
+#popupDialog {
+  display: none;
+  width: 120%;
+  height: 270%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-position: center;
+  background-image: url(./assets/certificate.png);
+  background-size: cover;
+  background-color: white;
+  padding: 15px;
+  border: 2px solid white;
+  border-radius: 5px;
+  box-shadow: 5px 5px 10px lightgrey;
+  z-index: 1001;
+}
+
+#popupDialog p {
+  margin-top: 10%;
+  font-family: cursive;
+  font-size: 30px;
+  padding: 10px;
+  color: black;
+}
+
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+#popupDialog button {
+  background-color: white;
+  font-size: 20px;
+  color: #65676b;
+  cursor: pointer;
+  border: 1px solid #65676b;
+  border-radius: 50%;
+}
+
+#leaderboard {
+  display: none;
+  width: 200px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  margin-left: 10px;
+  color: black;
+}
+
+.leaderboard-button {
+  display: none;
+  background-color: #00c9bb;
+  font-size: 14px;
+  padding: 2px 10px;
+  margin-left: 35px;
+  border: none;
+  border-radius: 5px;
+  z-index: 1001;
+}
+
+.leaderboard-button:hover {
+  background-color: #fefedf;
 }

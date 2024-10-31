@@ -9,20 +9,27 @@
   </head>
 
   <body>
-      <!-- header -->
-    <section class="header">
-      <h1>Quiz Quest Game</h1>
-    </section>
-    
+    <video class="video-container" muted autoplay loop>
+      <source src="./assets/video.mp4" type="video/mp4" />
+    </video>
     <div id="quiz-container">
       <!-- Start Screen -->
       <div id="start-screen">
-        <h1>Welcome to the Quiz!</h1>
+        <h1>Welcome to <br />Quiz Quest Game!</h1>
         <p>Answer each question and use lifelines wisely. Good luck!</p>
-        <button id="start-btn">Start Quiz</button>
+        <form id="name-form">
+          <input
+            name="name"
+            label="name"
+            placeholder="Enter your name..."
+            id="username"
+          />
+          <button id="start-btn">Start Quiz</button>
+        </form>
       </div>
 
       <!-- Quiz Screen -->
+
       <div id="quiz-screen" style="display: none">
         <div id="lifelines">
           <button id="hint-btn">Hint</button>
@@ -36,16 +43,28 @@
         </div>
         <div id="progress">
           <p id="question-counter">Question 1/10</p>
-          <p id="lives-counter">Lives: <span id="lives">3</span></p>
+          <p id="score-counter">Score: <span id="score">0</span></p>
+          <p id="lives-counter">Lives: <span id="lives">0</span></p>
         </div>
       </div>
-      
+
       <!-- End Screen -->
       <div id="end-screen" style="display: none">
         <h2>Quiz Complete!</h2>
         <p id="final-score"></p>
-        <button id="restart-btn">Restart Quiz</button>  
+        <button id="restart-btn">Restart Quiz</button>
+        <button id="result-btn">Generate your result</button>
+        <div id="overlay"></div>
+        <div id="popupDialog">
+          <p id="certificate"></p>
+          <button id="close-btn">X</button>
+        </div>
       </div>
+    </div>
+    <!-- Leaderboard Screen -->
+    <div class="leaderboard-box">
+      <button class="leaderboard-button">🏅 Leaderboard 🏅</button>
+      <div id="leaderboard"></div>
     </div>
   </body>
 </html>
