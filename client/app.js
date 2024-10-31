@@ -6,11 +6,19 @@ const questionText = document.getElementById("question-text");
 const answerOptions = document.getElementById("answer-options");
 const questionCounter = document.getElementById("question-counter");
 const livesCounter = document.getElementById("lives");
+const scoreCounter = document.getElementById("score");
 const nextButton = document.getElementById("next-btn");
 const startButton = document.getElementById("start-btn");
+const restartButton = document.getElementById("restart-btn");
+const leaderboard = document.getElementById("leaderboard");
+const leaderboardButton = document.querySelector(".leaderboard-button");
+const finalScore = document.getElementById("final-score");
 const timerDisplay = document.getElementById("timer");
 
 //Global variables
+let currentScore = 0;
+let currentID = {};
+let userName;
 let currentQuestionIndex = 0;
 let lives = 3;
 let score = 0;
@@ -52,10 +60,13 @@ function stopTimer() {
 function startQuiz() {
   startScreen.style.display = "none";
   quizScreen.style.display = "block";
+  endScreen.style.display = "none";
+  leaderboardButton.style.display = "block";
   currentQuestionIndex = 0;
   lives = 3;
-  score = 0;
+  currentScore = 0;
   livesCounter.textContent = lives;
+  scoreCounter.textContent = currentScore;
   hintButton.disabled = false;
   hintDisplay.textContent = "";
   getQuestion();
@@ -111,7 +122,8 @@ function handleAnswerSelection(e, correctAnswer) {
   if (selectedOption === correctAnswer) {
     stopTimer();
     e.target.classList.add("correct");
-    score++;
+    currentScore = currentScore + 4;
+    scoreCounter.textContent = currentScore;
     nextButton.style.display = "block"; // Show the next button only when right answer is clicked
     const answerButtons = document.querySelectorAll(".answer-btn"); // Disable all answer buttons
     answerButtons.forEach((btn) => (btn.disabled = true));
@@ -119,6 +131,7 @@ function handleAnswerSelection(e, correctAnswer) {
     e.target.classList.add("incorrect");
     lives--;
     livesCounter.textContent = lives;
+    nextButton.style.display = "none";
   }
 
   // End quiz if lives are 0 or all questions are answered
@@ -143,30 +156,135 @@ nextButton.addEventListener("click", () => {
 
 // End the quiz
 function endQuiz() {
+
   if (time <= 0) {
+    leaderboardButton.style.display = "none";
     quizScreen.style.display = "none";
     endScreen.style.display = "block";
     document.getElementById("end-message").textContent = "You ran out of time!";
     document.getElementById(
       "final-score"
-    ).textContent = `You finished the quiz with ${lives} lives left and a score of ${score}.`;
+    ).textContent = `You finished the quiz with ${lives} lives left and a score of ${currentScore}.`;
   } else if (lives === 0) {
+    leaderboardButton.style.display = "none";
     quizScreen.style.display = "none";
     endScreen.style.display = "block";
     document.getElementById("end-message").textContent =
       "You ran out of lives!";
     document.getElementById(
       "final-score"
-    ).textContent = `You finished the quiz with a score of ${score}.`;
+    ).textContent = `You finished the quiz with a score of ${currentScore}.`;
   } else {
+    leaderboardButton.style.display = "none";
     quizScreen.style.display = "none";
     endScreen.style.display = "block";
     document.getElementById("end-message").textContent = "Quiz Complete!";
     document.getElementById(
       "final-score"
-    ).textContent = `You finished the quiz with ${lives} lives left and a score of ${score}!`;
+    ).textContent = `You finished the quiz with ${lives} lives left and a score of ${currentScore}!`;
   }
 }
 
-// Restart the quiz
-document.getElementById("restart-btn").addEventListener("click", startQuiz);
+// Display score to leaderboard
+async function getScore() {
+  const response = await fetch("http://localhost:8080/leaderboard");
+  const board = await response.json();
+
+  for (let i = 0; i < Math.min(5, board.length); i++) {
+    const name = board[i].name;
+    const score = board[i].score;
+    const scoreDiv = document.createElement("div");
+    scoreDiv.classList.add("score-div");
+    const p = document.createElement("p");
+    console.log(p);
+    p.textContent = `${name}: ${score}`;
+
+    scoreDiv.appendChild(p);
+    leaderboard.appendChild(scoreDiv);
+  }
+}
+getScore();
+
+const p = document.createElement("p");
+p.id = "score-message";
+
+// Restart the quiz and update score to database
+restartButton.addEventListener("click", async function () {
+  const newScore = currentScore;
+  const storeObj = { score: newScore };
+  currentScore = storeObj;
+  console.log(currentScore);
+  const data = await fetch(
+    `http://localhost:8080/leaderboard/${currentID.id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(storeObj),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  startQuiz();
+});
+
+// Function to handle username submission
+const username = document.getElementById("username");
+const nameForm = document.getElementById("name-form");
+
+async function handleSubmitName(e) {
+  e.preventDefault();
+
+  const formData = new FormData(nameForm);
+  const formObj = Object.fromEntries(formData);
+  userName = formObj.name;
+  console.log(userName);
+  const response = await fetch("http://localhost:8080/leaderboard", {
+    method: "POST",
+    body: JSON.stringify(formObj),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await response.json();
+  currentID = data;
+  console.log(data);
+  nameForm.reset();
+}
+nameForm.addEventListener("submit", handleSubmitName);
+
+// Function to generate the result
+const generateResult = document.getElementById("result-btn");
+const overlay = document.getElementById("overlay");
+const popupDialog = document.getElementById("popupDialog");
+const closeButton = document.getElementById("close-btn");
+const certificate = document.getElementById("certificate");
+
+function showPopup() {
+  overlay.style.display = "block";
+  popupDialog.style.display = "block";
+  certificate.innerHTML = `Congratulations <span style="color: red; font-weight: bold;">${userName}</span> for completing this game with a score of <span style="color: green;">${currentScore}</span>!`;
+}
+
+function closePopup() {
+  overlay.style.display = "none";
+  popupDialog.style.display = "none";
+}
+
+generateResult.addEventListener("click", showPopup);
+closeButton.addEventListener("click", closePopup);
+
+overlay.addEventListener("click", closePopup);
+
+// Function to hide leaderboard
+
+function hideLeaderboard() {
+  if (leaderboard) {
+    if (
+      leaderboard.style.display === "none" ||
+      leaderboard.style.display === ""
+    ) {
+      leaderboard.style.display = "block";
+    } else {
+      leaderboard.style.display = "none";
+    }
+  }
+}
+leaderboardButton.addEventListener("click", hideLeaderboard);

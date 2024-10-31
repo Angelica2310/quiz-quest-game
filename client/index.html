@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quiz Quest</title>
@@ -9,46 +9,71 @@
   <script type="module" src="./app.js" defer></script>
 </head>
 
-<body>
-  <!-- header -->
+  <body>
+    <!-- header -->
   <section class="header">
     <h1>Quiz Quest</h1>
+    <h2>Geography Edition</h2>
   </section>
-
-  <div id="quiz-container">
-    <!-- Start Screen -->
-    <div id="start-screen">
-      <h1>Welcome to Quiz Quest!</h1>
-      <p>Answer each question and use lifelines wisely. Good luck!</p>
-      <button id="start-btn">Start Quiz</button>
-    </div>
-
-    <!-- Quiz Screen -->
-    <div id="quiz-screen" style="display: none">
-      <div id="lifelines">
-        <button id="hint-btn">Hint</button>
-        <button id="fifty-fifty-btn">50/50</button>
-        <button id="audience-btn">Ask the Audience</button>
+    
+    <video class="video-container" muted autoplay loop>
+      <source src="./assets/video.mp4" type="video/mp4" />
+    </video>
+    <div id="quiz-container">
+      <!-- Start Screen -->
+      <div id="start-screen">
+        <h1>Welcome to <br />Quiz Quest Game!</h1>
+        <p>Answer each question and use lifelines wisely. Good luck!</p>
+        <form id="name-form">
+          <input
+            name="name"
+            label="name"
+            placeholder="Enter your name..."
+            id="username"
+          />
+          <button id="start-btn">Start Quiz</button>
+        </form>
       </div>
-      <div id="question-section">
-        <h2 id="question-text"></h2>
-        <div id="answer-options"></div>
-        <button id="next-btn" style="display: none">Next Question</button>
+
+      <!-- Quiz Screen -->
+
+      <div id="quiz-screen" style="display: none">
+        <div id="lifelines">
+          <button id="hint-btn">Hint</button>
+          <button id="fifty-fifty-btn">50/50</button>
+          <button id="audience-btn">Ask the Audience</button>
+        </div>
+        <div id="question-section">
+          <h2 id="question-text"></h2>
+          <div id="answer-options"></div>
+          <button id="next-btn" style="display: none">Next Question</button>
+        </div>
+        <div id="progress">
+          <p id="question-counter">Question 1/10</p>
+           <p id="timer"></p>
+          <p id="score-counter">Score: <span id="score">0</span></p>
+          <p id="lives-counter">Lives: <span id="lives">0</span></p>
+        </div>
       </div>
-      <div id="progress">
-        <p id="question-counter">Question 1/10</p>
-        <p id="timer"></p>
-        <p id="lives-counter">Lives: <span id="lives">3</span></p>
+
+      <!-- End Screen -->
+      <div id="end-screen" style="display: none">
+        <h2>Quiz Complete!</h2>
+        <p id="final-score"></p>
+        <button id="restart-btn">Restart Quiz</button>
+        <button id="result-btn">Generate your result</button>
+        <div id="overlay"></div>
+        <div id="popupDialog">
+          <p id="certificate"></p>
+          <button id="close-btn">X</button>
+        </div>
       </div>
     </div>
-
-    <!-- End Screen -->
-    <div id="end-screen" style="display: none">
-      <h2 id="end-message"></h2>
-      <p id="final-score"></p>
-      <button id="restart-btn">Restart Quiz</button>
+    <!-- Leaderboard Screen -->
+    <div class="leaderboard-box">
+      <button class="leaderboard-button">🏅 Leaderboard 🏅</button>
+      <div id="leaderboard"></div>
     </div>
-
-</body>
-
+  </body>
 </html>
+
