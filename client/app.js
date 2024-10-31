@@ -13,11 +13,17 @@ const restartButton = document.getElementById("restart-btn");
 const leaderboard = document.getElementById("leaderboard");
 const leaderboardButton = document.querySelector(".leaderboard-button");
 const finalScore = document.getElementById("final-score");
-let currentQuestionIndex = 0;
-let lives = 3;
+const timerDisplay = document.getElementById("timer");
+
+//Global variables
 let currentScore = 0;
 let currentID = {};
 let userName;
+let currentQuestionIndex = 0;
+let lives = 3;
+let score = 0;
+let time = 10;
+let countdown; //declaring countdown itself as a global variable
 
 // Hint elements
 const hintButton = document.getElementById("hint-btn");
@@ -27,6 +33,28 @@ document.getElementById("question-section").appendChild(hintDisplay);
 
 // Event listener for starting the quiz
 startButton.addEventListener("click", startQuiz);
+
+// Timer functions
+function startTimer() {
+  clearInterval(countdown);
+  time = 10;
+  timerDisplay.textContent = `Time: ${time}s`;
+
+  countdown = setInterval(() => {
+    time--;
+    timerDisplay.textContent = `Time: ${time}s`;
+
+    if (time <= 0) {
+      clearInterval(countdown);
+      endQuiz();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(countdown);
+  timerDisplay.textContent = "";
+}
 
 // Start the quiz
 function startQuiz() {
@@ -46,6 +74,7 @@ function startQuiz() {
 
 // Fetch question from the server
 async function getQuestion() {
+  endScreen.style.display = "none";
   const response = await fetch(
     `https://quiz-quest-game-server.onrender.com/question${
       currentQuestionIndex + 1
@@ -82,6 +111,8 @@ async function getQuestion() {
     hintDisplay.textContent = question.hint;
     hintButton.disabled = true;
   });
+
+  startTimer();
 }
 
 // Handle answer selection
@@ -89,10 +120,13 @@ function handleAnswerSelection(e, correctAnswer) {
   const selectedOption = e.target.getAttribute("data-option");
 
   if (selectedOption === correctAnswer) {
+    stopTimer();
     e.target.classList.add("correct");
     currentScore = currentScore + 4;
     scoreCounter.textContent = currentScore;
-    // nextButton.style.display = "block";
+    nextButton.style.display = "block"; // Show the next button only when right answer is clicked
+    const answerButtons = document.querySelectorAll(".answer-btn"); // Disable all answer buttons
+    answerButtons.forEach((btn) => (btn.disabled = true));
   } else {
     e.target.classList.add("incorrect");
     lives--;
@@ -100,15 +134,9 @@ function handleAnswerSelection(e, correctAnswer) {
     nextButton.style.display = "none";
   }
 
-  // Disable all answer buttons
-  const answerButtons = document.querySelectorAll(".answer-btn");
-  answerButtons.forEach((btn) => (btn.disabled = true));
-
-  // Show the next button
-  nextButton.style.display = "block";
-
   // End quiz if lives are 0 or all questions are answered
   if (lives === 0 || currentQuestionIndex === 9) {
+    stopTimer();
     endQuiz();
   }
 }
@@ -128,10 +156,33 @@ nextButton.addEventListener("click", () => {
 
 // End the quiz
 function endQuiz() {
-  quizScreen.style.display = "none";
-  endScreen.style.display = "block";
-  leaderboardButton.style.display = "none";
-  finalScore.textContent = `You completed the quiz with ${lives} lives left and a score of ${currentScore}!`;
+
+  if (time <= 0) {
+    leaderboardButton.style.display = "none";
+    quizScreen.style.display = "none";
+    endScreen.style.display = "block";
+    document.getElementById("end-message").textContent = "You ran out of time!";
+    document.getElementById(
+      "final-score"
+    ).textContent = `You finished the quiz with ${lives} lives left and a score of ${currentScore}.`;
+  } else if (lives === 0) {
+    leaderboardButton.style.display = "none";
+    quizScreen.style.display = "none";
+    endScreen.style.display = "block";
+    document.getElementById("end-message").textContent =
+      "You ran out of lives!";
+    document.getElementById(
+      "final-score"
+    ).textContent = `You finished the quiz with a score of ${currentScore}.`;
+  } else {
+    leaderboardButton.style.display = "none";
+    quizScreen.style.display = "none";
+    endScreen.style.display = "block";
+    document.getElementById("end-message").textContent = "Quiz Complete!";
+    document.getElementById(
+      "final-score"
+    ).textContent = `You finished the quiz with ${lives} lives left and a score of ${currentScore}!`;
+  }
 }
 
 // Display score to leaderboard

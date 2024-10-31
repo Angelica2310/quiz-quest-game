@@ -8,7 +8,8 @@
 
 body {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-evenly;
   align-items: center;
   min-height: 100vh;
   background-color: #f4f4f9;
@@ -25,9 +26,22 @@ body {
   z-index: -2;
 }
 
+.header {
+  font-size: 20px;
+}
+
+.header h2{
+  font-size: 15px;
+}
+
+.title-image {
+  position: absolute;
+  z-index: 0;
+}
+
 #quiz-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 95vw;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
@@ -122,8 +136,9 @@ button:hover {
 }
 
 #answer-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
   gap: 10px;
   margin-top: 10px;
 }
@@ -152,6 +167,32 @@ button:hover {
   background-color: #dc3545;
   color: white;
   border-color: #dc3545;
+  animation-name: vibrate; /* https://www.w3schools.com/css/css3_animations.asp */
+  animation-duration: 0.1s;
+  animation-timing-function: linear;
+  animation-iteration-count: 4;
+}
+
+@keyframes vibrate {
+  0% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, 1px);
+  }
+  100% {
+    transform: translate(1px, -1px);
+  }
+}
+
+#hint-display {
+  margin: 10px;
 }
 
 /* Next Button */
@@ -179,6 +220,7 @@ button:hover {
   justify-content: space-between;
   font-size: 1.1em;
   color: white;
+  margin-top: 15px;
 }
 
 /* End Screen */
@@ -279,4 +321,28 @@ button:hover {
 
 .leaderboard-button:hover {
   background-color: #fefedf;
+}
+
+@media (min-width: 480px) {
+  .header {
+    font-size: 30px;
+  }
+
+  #quiz-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  #answer-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
 }

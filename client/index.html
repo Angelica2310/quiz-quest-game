@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz Quest Game</title>
-    <link rel="stylesheet" href="./style.css" />
-    <script type="module" src="./app.js" defer></script>
-  </head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Quest</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="module" src="./app.js" defer></script>
+</head>
 
   <body>
+    <!-- header -->
+  <section class="header">
+    <h1>Quiz Quest</h1>
+    <h2>Geography Edition</h2>
+  </section>
+    
     <video class="video-container" muted autoplay loop>
       <source src="./assets/video.mp4" type="video/mp4" />
     </video>
@@ -43,6 +50,7 @@
         </div>
         <div id="progress">
           <p id="question-counter">Question 1/10</p>
+           <p id="timer"></p>
           <p id="score-counter">Score: <span id="score">0</span></p>
           <p id="lives-counter">Lives: <span id="lives">0</span></p>
         </div>
@@ -68,3 +76,4 @@
     </div>
   </body>
 </html>
+
