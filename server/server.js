@@ -22,10 +22,6 @@ app.get("/question:questionNumber", async (request, response) => {
   response.json(questions);
 });
 
-app.listen(8080, () => {
-  console.log("App is running on PORT 8080");
-});
-
 // POST request to insert name and score into database
 app.post("/leaderboard", async function (request, response) {
   const { name, score } = request.body;
@@ -58,4 +54,8 @@ app.put("/leaderboard/:id", async function (request, response) {
     return response.json({ error: "Score not found" });
   }
   response.json({ message: "Score updated!" });
+});
+
+app.listen(8080, () => {
+  console.log("App is running on PORT 8080");
 });

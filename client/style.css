@@ -12,7 +12,6 @@ body {
   justify-content: space-evenly;
   align-items: center;
   min-height: 100vh;
-  background-color: #f4f4f9;
   color: white;
 }
 
@@ -30,7 +29,7 @@ body {
   font-size: 20px;
 }
 
-.header h2{
+.header h2 {
   font-size: 15px;
 }
 
@@ -49,14 +48,6 @@ body {
   transition: transform 0.3s ease;
   backdrop-filter: blur(20px);
 }
-
-/* #leaderboard:hover {
-  transform: scale(1.02);
-}
-
-#quiz-container:hover {
-  transform: scale(1.02);
-} */
 
 /* Start Screen */
 #start-screen {
@@ -328,15 +319,19 @@ button:hover {
     font-size: 30px;
   }
 
+  .header h2 {
+    font-size: 15px;
+  }
+
   #quiz-container {
     width: 100%;
     max-width: 600px;
     padding: 20px;
-    background-color: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     text-align: center;
     transition: transform 0.3s ease;
+    backdrop-filter: blur(20px);
   }
 
   #answer-options {

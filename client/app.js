@@ -154,30 +154,29 @@ nextButton.addEventListener("click", () => {
   }
 });
 
+function display() {
+  leaderboardButton.style.display = "none";
+  quizScreen.style.display = "none";
+  endScreen.style.display = "block";
+}
+
 // End the quiz
 function endQuiz() {
-
   if (time <= 0) {
-    leaderboardButton.style.display = "none";
-    quizScreen.style.display = "none";
-    endScreen.style.display = "block";
+    display();
     document.getElementById("end-message").textContent = "You ran out of time!";
     document.getElementById(
       "final-score"
     ).textContent = `You finished the quiz with ${lives} lives left and a score of ${currentScore}.`;
   } else if (lives === 0) {
-    leaderboardButton.style.display = "none";
-    quizScreen.style.display = "none";
-    endScreen.style.display = "block";
+    display();
     document.getElementById("end-message").textContent =
       "You ran out of lives!";
     document.getElementById(
       "final-score"
     ).textContent = `You finished the quiz with a score of ${currentScore}.`;
   } else {
-    leaderboardButton.style.display = "none";
-    quizScreen.style.display = "none";
-    endScreen.style.display = "block";
+    display();
     document.getElementById("end-message").textContent = "Quiz Complete!";
     document.getElementById(
       "final-score"
@@ -193,98 +192,97 @@ async function getScore() {
   for (let i = 0; i < Math.min(5, board.length); i++) {
     const name = board[i].name;
     const score = board[i].score;
+
+    // if (score !== null || score !== 0) {
     const scoreDiv = document.createElement("div");
     scoreDiv.classList.add("score-div");
+
     const p = document.createElement("p");
     console.log(p);
-    p.textContent = `${name}: ${score}`;
+    p.innerHTML = `<strong>${name}</strong>: ${score}`;
 
     scoreDiv.appendChild(p);
     leaderboard.appendChild(scoreDiv);
+    // }
   }
-}
-getScore();
+  getScore();
 
-const p = document.createElement("p");
-p.id = "score-message";
+  // Restart the quiz and update score to database
+  restartButton.addEventListener("click", async function () {
+    const newScore = currentScore;
+    const storeObj = { score: newScore };
+    currentScore = storeObj;
+    console.log(currentScore);
+    const data = await fetch(
+      `http://localhost:8080/leaderboard/${currentID.id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(storeObj),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
-// Restart the quiz and update score to database
-restartButton.addEventListener("click", async function () {
-  const newScore = currentScore;
-  const storeObj = { score: newScore };
-  currentScore = storeObj;
-  console.log(currentScore);
-  const data = await fetch(
-    `http://localhost:8080/leaderboard/${currentID.id}`,
-    {
-      method: "PUT",
-      body: JSON.stringify(storeObj),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
-
-  startQuiz();
-});
-
-// Function to handle username submission
-const username = document.getElementById("username");
-const nameForm = document.getElementById("name-form");
-
-async function handleSubmitName(e) {
-  e.preventDefault();
-
-  const formData = new FormData(nameForm);
-  const formObj = Object.fromEntries(formData);
-  userName = formObj.name;
-  console.log(userName);
-  const response = await fetch("http://localhost:8080/leaderboard", {
-    method: "POST",
-    body: JSON.stringify(formObj),
-    headers: { "Content-Type": "application/json" },
+    startQuiz();
   });
 
-  const data = await response.json();
-  currentID = data;
-  console.log(data);
-  nameForm.reset();
-}
-nameForm.addEventListener("submit", handleSubmitName);
+  // Function to handle username submission
+  const userName = document.getElementById("username");
+  const nameForm = document.getElementById("name-form");
 
-// Function to generate the result
-const generateResult = document.getElementById("result-btn");
-const overlay = document.getElementById("overlay");
-const popupDialog = document.getElementById("popupDialog");
-const closeButton = document.getElementById("close-btn");
-const certificate = document.getElementById("certificate");
+  async function handleSubmitName(e) {
+    e.preventDefault();
 
-function showPopup() {
-  overlay.style.display = "block";
-  popupDialog.style.display = "block";
-  certificate.innerHTML = `Congratulations <span style="color: red; font-weight: bold;">${userName}</span> for completing this game with a score of <span style="color: green;">${currentScore}</span>!`;
-}
+    const formData = new FormData(nameForm);
+    const formObj = Object.fromEntries(formData);
+    userName = formObj.name;
+    console.log(userName);
+    const response = await fetch("http://localhost:8080/leaderboard", {
+      method: "POST",
+      body: JSON.stringify(formObj),
+      headers: { "Content-Type": "application/json" },
+    });
 
-function closePopup() {
-  overlay.style.display = "none";
-  popupDialog.style.display = "none";
-}
+    const data = await response.json();
+    currentID = data;
+    console.log(data);
+    nameForm.reset();
+  }
+  nameForm.addEventListener("submit", handleSubmitName);
 
-generateResult.addEventListener("click", showPopup);
-closeButton.addEventListener("click", closePopup);
+  // Function to generate the result
+  const generateResult = document.getElementById("result-btn");
+  const overlay = document.getElementById("overlay");
+  const popupDialog = document.getElementById("popupDialog");
+  const closeButton = document.getElementById("close-btn");
+  const certificate = document.getElementById("certificate");
 
-overlay.addEventListener("click", closePopup);
+  function showPopup() {
+    overlay.style.display = "block";
+    popupDialog.style.display = "block";
+    certificate.innerHTML = `Congratulations <span style="color: red; font-weight: bold;">${userName}</span> for completing this game with a score of <span style="color: green;">${currentScore}</span>!`;
+  }
 
-// Function to hide leaderboard
+  function closePopup() {
+    overlay.style.display = "none";
+    popupDialog.style.display = "none";
+  }
 
-function hideLeaderboard() {
-  if (leaderboard) {
-    if (
-      leaderboard.style.display === "none" ||
-      leaderboard.style.display === ""
-    ) {
-      leaderboard.style.display = "block";
-    } else {
-      leaderboard.style.display = "none";
+  generateResult.addEventListener("click", showPopup);
+  closeButton.addEventListener("click", closePopup);
+  overlay.addEventListener("click", closePopup);
+
+  // Function to hide leaderboard
+  function hideLeaderboard() {
+    if (leaderboard) {
+      if (
+        leaderboard.style.display === "none" ||
+        leaderboard.style.display === ""
+      ) {
+        leaderboard.style.display = "block";
+      } else {
+        leaderboard.style.display = "none";
+      }
     }
   }
+  leaderboardButton.addEventListener("click", hideLeaderboard);
 }
-leaderboardButton.addEventListener("click", hideLeaderboard);
