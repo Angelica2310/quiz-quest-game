@@ -21,7 +21,6 @@ let currentID = {};
 let userName;
 let currentQuestionIndex = 0;
 let lives = 3;
-let score = 0;
 let time = 10;
 let countdown; //declaring countdown itself as a global variable
 
@@ -30,6 +29,48 @@ const hintButton = document.getElementById("hint-btn");
 const hintDisplay = document.createElement("p");
 hintDisplay.id = "hint-display";
 document.getElementById("question-section").appendChild(hintDisplay);
+const fiftyFiftyButton = document.getElementById("fifty-fifty-btn");
+const audienceButton = document.getElementById("audience-btn");
+let fiftyFiftyUsed = false;
+let audienceUsed = false;
+
+function saveQuizState(question = null) {
+  const state = {
+    currentQuestionIndex,
+    lives,
+    currentScore,
+    hintUsed: hintButton.disabled,
+    fiftyFiftyUsed: fiftyFiftyButton.disabled,
+    audienceUsed,
+    question,
+  };
+  localStorage.setItem("quizState", JSON.stringify(state));
+}
+
+function loadQuizState() {
+  const savedState = JSON.parse(localStorage.getItem("quizState"));
+  if (savedState) {
+    startScreen.style.display = "none";
+    quizScreen.style.display = "block";
+    currentQuestionIndex = savedState.currentQuestionIndex;
+    lives = savedState.lives;
+    currentScore = savedState.currentScore;
+    livesCounter.textContent = lives;
+
+    hintButton.disabled = savedState.hintUsed;
+    hintDisplay.textContent = savedState.hintDisplayText;
+    fiftyFiftyUsed = savedState.fiftyFiftyUsed;
+    audienceUsed = savedState.audienceUsed;
+
+    // Disable buttons if they were used
+    if (fiftyFiftyUsed) fiftyFiftyButton.disabled = true;
+    if (audienceUsed) audienceButton.disabled = true;
+
+    displayQuestion(savedState.question);
+  } else {
+    getQuestion(); // Fetch a new question if no saved state exists
+  }
+}
 
 // Event listener for starting the quiz
 startButton.addEventListener("click", startQuiz);
@@ -69,6 +110,10 @@ function startQuiz() {
   scoreCounter.textContent = currentScore;
   hintButton.disabled = false;
   hintDisplay.textContent = "";
+  fiftyFiftyButton.disabled = false;
+  audienceButton.disabled = false;
+  fiftyFiftyUsed = false;
+  audienceUsed = false;
   getQuestion();
 }
 
@@ -84,6 +129,12 @@ async function getQuestion() {
   const randomIndex = Math.floor(Math.random() * questions.length);
   const question = questions[randomIndex];
 
+  saveQuizState(question); // Save the question and state
+  displayQuestion(question);
+}
+
+// Display question data
+function displayQuestion(question) {
   questionText.textContent = question.question;
   answerOptions.innerHTML = "";
   hintDisplay.textContent = "";
@@ -107,13 +158,46 @@ async function getQuestion() {
 
   questionCounter.textContent = `Question ${currentQuestionIndex + 1}/10`;
 
-  hintButton.addEventListener("click", () => {
-    hintDisplay.textContent = question.hint;
-    hintButton.disabled = true;
-  });
-
   startTimer();
+
 }
+
+// Set up the hint button listener only once
+hintButton.addEventListener("click", () => {
+  const savedState = JSON.parse(localStorage.getItem("quizState"));
+  if (savedState && savedState.question) {
+    hintDisplay.textContent = savedState.question.hint;
+  }
+  hintButton.disabled = true;
+  currentScore--;
+  saveQuizState(savedState.question);
+});
+
+// Add 50-50 button functionality once
+fiftyFiftyButton.addEventListener("click", () => {
+  const savedState = JSON.parse(localStorage.getItem("quizState"));
+  const answerButtons = Array.from(document.querySelectorAll(".answer-btn"));
+  const correctAnswer = savedState.question.correct_answer;
+
+  // Identify the correct answer button
+  const correctButton = answerButtons.find(
+    (btn) => btn.getAttribute("data-option") === correctAnswer
+  );
+
+  // Filter only incorrect buttons
+  const incorrectButtons = answerButtons.filter((btn) => btn !== correctButton);
+
+  // Select two random incorrect buttons to hide
+  const buttonsToHide = incorrectButtons.slice(0, 2);
+  buttonsToHide.forEach((btn) => (btn.style.display = "none"));
+
+  // Disable 50-50 button after use
+  fiftyFiftyButton.disabled = true;
+  fiftyFiftyUsed = true;
+  currentScore = currentScore - 2;
+
+  saveQuizState();
+});
 
 // Handle answer selection
 function handleAnswerSelection(e, correctAnswer) {
@@ -134,11 +218,14 @@ function handleAnswerSelection(e, correctAnswer) {
     nextButton.style.display = "none";
   }
 
+
   // End quiz if lives are 0 or all questions are answered
   if (lives === 0 || currentQuestionIndex === 9) {
     stopTimer();
     endQuiz();
   }
+  
+  saveQuizState();
 }
 
 // Move to the next question
@@ -148,6 +235,7 @@ nextButton.addEventListener("click", () => {
     if (currentQuestionIndex < 10) {
       getQuestion();
       nextButton.style.display = "none";
+      saveQuizState();
     } else {
       endQuiz();
     }
@@ -208,23 +296,6 @@ getScore();
 const p = document.createElement("p");
 p.id = "score-message";
 
-// Restart the quiz and update score to database
-restartButton.addEventListener("click", async function () {
-  const newScore = currentScore;
-  const storeObj = { score: newScore };
-  currentScore = storeObj;
-  console.log(currentScore);
-  const data = await fetch(
-    `http://localhost:8080/leaderboard/${currentID.id}`,
-    {
-      method: "PUT",
-      body: JSON.stringify(storeObj),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
-
-  startQuiz();
-});
 
 // Function to handle username submission
 const username = document.getElementById("username");
@@ -288,3 +359,46 @@ function hideLeaderboard() {
   }
 }
 leaderboardButton.addEventListener("click", hideLeaderboard);
+
+// Restart the quiz with fresh state
+async function restartQuiz() {
+  
+  // Update leaderboard 
+  const newScore = currentScore;
+  const storeObj = { score: newScore };
+  currentScore = storeObj;
+  console.log(currentScore);
+  const data = await fetch(
+    `http://localhost:8080/leaderboard/${currentID.id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(storeObj),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  
+  localStorage.clear(); 
+  currentQuestionIndex = 0;
+  questionText.textContent = "";
+  hintDisplay.textContent = "";
+  fiftyFiftyUsed = false;
+  audienceUsed = false;
+  fiftyFiftyButton.disabled = false;
+  audienceButton.disabled = false;
+  questionCounter.textContent = "";
+  answerOptions.innerHTML = "";
+
+  // Hide end screen and show start screen
+  endScreen.style.display = "none";
+  startScreen.style.display = "block";
+  quizScreen.style.display = "none";
+}
+
+// Restart the quiz
+document.getElementById("restart-btn").addEventListener("click", restartQuiz);
+
+// Load state on page load
+window.onload = function () {
+  loadQuizState();
+};
+
