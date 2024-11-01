@@ -28,9 +28,10 @@ body {
 
 .header {
   font-size: 20px;
+  text-align: center;
 }
 
-.header h2{
+.header h2 {
   font-size: 15px;
 }
 
@@ -78,10 +79,14 @@ body {
 #name-form input {
   background-color: #fefedf;
   border: none;
-  height: 20px;
+  height: 25px;
+  font-size: 18px;
+  border-radius: 5px;
+  padding-left: 5px;
 }
 
 button {
+  margin: 5px;
   padding: 10px 20px;
   font-size: 1em;
   cursor: pointer;
@@ -95,6 +100,42 @@ button {
 button:hover {
   background-color: #ffc0ff;
   transform: scale(1.05);
+}
+
+#instructions-screen {
+  background: rgb(47, 47, 47);
+  border: 2px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 90vh;
+  overflow-y: auto;
+  z-index: 10;
+  line-height: 1.6;
+}
+
+#instructions-screen h2,
+h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+#instructions-screen ol,
+ul {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+#instructions-screen li {
+  margin-bottom: 15px;
+}
+
+#close-instructions-btn {
+  margin-top: 20px;
 }
 
 /* Quiz Screen */
@@ -173,6 +214,12 @@ button:hover {
   animation-iteration-count: 4;
 }
 
+.highlight {
+  background-color: gold;
+  color: white;
+  border-color: gold;
+}
+
 @keyframes vibrate {
   0% {
     transform: translate(0);
@@ -219,11 +266,15 @@ button:hover {
   display: flex;
   justify-content: space-between;
   font-size: 1.1em;
-  color: white;
+  color: black;
   margin-top: 15px;
 }
 
 /* End Screen */
+#end-screen {
+  text-align: center;
+}
+
 #end-screen h2 {
   font-size: 2em;
   color: #00c9bb;
@@ -250,8 +301,8 @@ button:hover {
 
 #popupDialog {
   display: none;
-  width: 120%;
-  height: 270%;
+  width: 80vw;
+  aspect-ratio: 640 / 426;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -265,12 +316,14 @@ button:hover {
   border-radius: 5px;
   box-shadow: 5px 5px 10px lightgrey;
   z-index: 1001;
+  max-width: 90vw;
+  max-height: 80vh;
 }
 
 #popupDialog p {
   margin-top: 10%;
   font-family: cursive;
-  font-size: 30px;
+  font-size: 15px;
   padding: 10px;
   color: black;
 }
@@ -332,7 +385,6 @@ button:hover {
     width: 100%;
     max-width: 600px;
     padding: 20px;
-    background-color: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     text-align: center;
@@ -344,5 +396,9 @@ button:hover {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-top: 10px;
+  }
+
+  #popupDialog p {
+    font-size: 30px;
   }
 }
