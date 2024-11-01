@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz Quest</title>
-  <link rel="stylesheet" href="./style.css" />
-  <script type="module" src="./app.js" defer></script>
-</head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Quest</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./app.js" defer></script>
+  </head>
 
   <body>
     <!-- header -->
-  <section class="header">
-    <h1>Quiz Quest</h1>
-    <h2>Geography Edition</h2>
-  </section>
-    
+    <section class="header">
+      <h1>Quiz Quest</h1>
+      <h2>Geography Edition</h2>
+    </section>
+
     <video class="video-container" muted autoplay loop>
       <source src="./assets/video.mp4" type="video/mp4" />
     </video>
@@ -32,8 +31,39 @@
             id="username"
           />
           <button id="start-btn">Start Quiz</button>
+          
         </form>
+
+          <button id="instructions-btn">Instructions</button>
       </div>
+      
+      <div id="instructions-screen" style="display: none;">
+          <h2>Quiz Instructions</h2>
+          <p>Welcome to Quiz Quest!</p> 
+          <p>Are you ready to test your knowledge and have some fun? Here's what you need to know before you start!</p>
+          <h3>How to Play:</h3>
+          <ol>
+              <li><strong>Starting the Quiz:</strong> Click the "Start Quiz" button to begin. You'll have 10 questions to answer! Before starting, enter your name to submit your score for the leaderboard.</li>
+              <li><strong>Answering Questions:</strong> For each question, you will see four options (A, B, C, D). You cannot proceed to the next question until you select the correct answer.</li>
+              <li><strong>Scoring:</strong> Correct answers earn you 4 points! Incorrect answers will cost you 1 life. You start with 3 lives.</li>
+              <li><strong>Hints and Lifelines:</strong> You have three lifelines to help you along the way, and each can only be used once per quiz:
+                  <ul>
+                      <li><strong>Hint:</strong> Use the "Hint" button to get a clue for the current question. This will deduct 1 point from your score.</li>
+                      <li><strong>50/50:</strong> If you're stuck, use the "50/50" lifeline to remove two incorrect options from the answer choices. This will deduct 2 points from your score.</li>
+                      <li><strong>Ask the Audience:</strong> This lifeline highlights the most favored answer, based on what other players guessed the most. This will deduct 3 points from your score.</li>
+                  </ul>
+              </li>
+              <li><strong>Timer:</strong> You have 10 seconds to answer each question. Keep an eye on the timer! If time runs out, the quiz will end.</li>
+              <li><strong>Ending the Quiz:</strong> The quiz will end if you run out of lives, time or when you finish all 10 questions. After the quiz, your score will be displayed along with the number of lives you have left.</li>
+          </ol>
+          <h3>Leaderboard:</h3>
+          <p>After finishing the quiz, your score will be submitted to the leaderboard with the name you entered before starting.</p>
+          <h3>Tips for Success:</h3>
+          <p>Read each question carefully before answering. Use hints and lifelines wisely! Don't rush, but keep an eye on the timer.</p>
+          <button id="close-instructions-btn">Close</button>
+      </div>
+        
+      
 
       <!-- Quiz Screen -->
 
@@ -50,7 +80,7 @@
         </div>
         <div id="progress">
           <p id="question-counter">Question 1/10</p>
-           <p id="timer"></p>
+          <p id="timer"></p>
           <p id="score-counter">Score: <span id="score">0</span></p>
           <p id="lives-counter">Lives: <span id="lives">0</span></p>
         </div>
@@ -59,6 +89,7 @@
       <!-- End Screen -->
       <div id="end-screen" style="display: none">
         <h2>Quiz Complete!</h2>
+        <h2 id="end-message"></h2>
         <p id="final-score"></p>
         <button id="restart-btn">Restart Quiz</button>
         <button id="result-btn">Generate your result</button>
@@ -69,6 +100,7 @@
         </div>
       </div>
     </div>
+  </div>
     <!-- Leaderboard Screen -->
     <div class="leaderboard-box">
       <button class="leaderboard-button">🏅 Leaderboard 🏅</button>
@@ -76,4 +108,3 @@
     </div>
   </body>
 </html>
-
