@@ -14,6 +14,11 @@ const leaderboard = document.getElementById("leaderboard");
 const leaderboardButton = document.querySelector(".leaderboard-button");
 const finalScore = document.getElementById("final-score");
 const timerDisplay = document.getElementById("timer");
+const instructionsButton = document.getElementById("instructions-btn");
+const instructionsScreen = document.getElementById("instructions-screen");
+const closeInstructionsButton = document.getElementById(
+  "close-instructions-btn"
+);
 
 //Global variables
 let currentScore = 0;
@@ -34,6 +39,7 @@ const audienceButton = document.getElementById("audience-btn");
 let fiftyFiftyUsed = false;
 let audienceUsed = false;
 
+// Save quiz state
 function saveQuizState(question = null) {
   const state = {
     currentQuestionIndex,
@@ -41,36 +47,21 @@ function saveQuizState(question = null) {
     currentScore,
     hintUsed: hintButton.disabled,
     fiftyFiftyUsed: fiftyFiftyButton.disabled,
-    audienceUsed,
+    audienceUsed: audienceButton.disabled,
     question,
   };
   localStorage.setItem("quizState", JSON.stringify(state));
 }
 
-function loadQuizState() {
-  const savedState = JSON.parse(localStorage.getItem("quizState"));
-  if (savedState) {
-    startScreen.style.display = "none";
-    quizScreen.style.display = "block";
-    currentQuestionIndex = savedState.currentQuestionIndex;
-    lives = savedState.lives;
-    currentScore = savedState.currentScore;
-    livesCounter.textContent = lives;
+// Show instructions screen
+instructionsButton.addEventListener("click", () => {
+  instructionsScreen.style.display = "block";
+});
 
-    hintButton.disabled = savedState.hintUsed;
-    hintDisplay.textContent = savedState.hintDisplayText;
-    fiftyFiftyUsed = savedState.fiftyFiftyUsed;
-    audienceUsed = savedState.audienceUsed;
-
-    // Disable buttons if they were used
-    if (fiftyFiftyUsed) fiftyFiftyButton.disabled = true;
-    if (audienceUsed) audienceButton.disabled = true;
-
-    displayQuestion(savedState.question);
-  } else {
-    getQuestion(); // Fetch a new question if no saved state exists
-  }
-}
+// Close instructions screen
+closeInstructionsButton.addEventListener("click", () => {
+  instructionsScreen.style.display = "none";
+});
 
 // Event listener for starting the quiz
 startButton.addEventListener("click", startQuiz);
@@ -129,7 +120,7 @@ async function getQuestion() {
   const randomIndex = Math.floor(Math.random() * questions.length);
   const question = questions[randomIndex];
 
-  saveQuizState(question); // Save the question and state
+  saveQuizState(question);
   displayQuestion(question);
 }
 
@@ -198,6 +189,27 @@ fiftyFiftyButton.addEventListener("click", () => {
   saveQuizState();
 });
 
+// Add ask audience button functionality once
+audienceButton.addEventListener("click", () => {
+  const savedState = JSON.parse(localStorage.getItem("quizState"));
+  const answerButtons = Array.from(document.querySelectorAll(".answer-btn"));
+  const chosenAnswer = savedState.question.correct_answer;
+
+  // Identify the correct answer button
+  const chosenButton = answerButtons.find(
+    (btn) => btn.getAttribute("data-option") === chosenAnswer
+  );
+
+  chosenButton.classList.add("highlight");
+
+  // Disable 50-50 button after use
+  audienceButton.disabled = true;
+  audienceUsed = true;
+  currentScore = currentScore - 3;
+
+  saveQuizState();
+});
+
 // Handle answer selection
 function handleAnswerSelection(e, correctAnswer) {
   const selectedOption = e.target.getAttribute("data-option");
@@ -224,6 +236,7 @@ function handleAnswerSelection(e, correctAnswer) {
   }
 
   saveQuizState();
+
 }
 
 // Move to the next question
@@ -233,7 +246,6 @@ nextButton.addEventListener("click", () => {
     if (currentQuestionIndex < 10) {
       getQuestion();
       nextButton.style.display = "none";
-      saveQuizState();
     } else {
       endQuiz();
     }
@@ -272,18 +284,25 @@ function endQuiz() {
 
 // Display score to leaderboard
 async function getScore() {
-  const response = await fetch("http://localhost:8080/leaderboard");
+  const response = await fetch(
+    "https://quiz-quest-game-server.onrender.com/leaderboard"
+  );
   const board = await response.json();
 
   for (let i = 0; i < Math.min(5, board.length); i++) {
     const name = board[i].name;
     const score = board[i].score;
+
     if (score !== null && score !== 0) {
       const scoreDiv = document.createElement("div");
       scoreDiv.classList.add("score-div");
       const p = document.createElement("p");
       console.log(p);
-      p.textContent = `${name}: ${score}`;
+
+    
+
+      p.innerHTML = `<strong>${name}</strong>: ${score}`;
+
 
       scoreDiv.appendChild(p);
       leaderboard.appendChild(scoreDiv);
@@ -298,52 +317,45 @@ p.id = "score-message";
 // Function to handle username submission
 const username = document.getElementById("username");
 const nameForm = document.getElementById("name-form");
-
 async function handleSubmitName(e) {
   e.preventDefault();
-
   const formData = new FormData(nameForm);
   const formObj = Object.fromEntries(formData);
   userName = formObj.name;
   console.log(userName);
-  const response = await fetch("http://localhost:8080/leaderboard", {
-    method: "POST",
-    body: JSON.stringify(formObj),
-    headers: { "Content-Type": "application/json" },
-  });
-
+  const response = await fetch(
+    "https://quiz-quest-game-server.onrender.com/leaderboard",
+    {
+      method: "POST",
+      body: JSON.stringify(formObj),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
   const data = await response.json();
   currentID = data;
   console.log(data);
   nameForm.reset();
 }
 nameForm.addEventListener("submit", handleSubmitName);
-
 // Function to generate the result
 const generateResult = document.getElementById("result-btn");
 const overlay = document.getElementById("overlay");
 const popupDialog = document.getElementById("popupDialog");
 const closeButton = document.getElementById("close-btn");
 const certificate = document.getElementById("certificate");
-
 function showPopup() {
   overlay.style.display = "block";
   popupDialog.style.display = "block";
   certificate.innerHTML = `Congratulations <span style="color: red; font-weight: bold;">${userName}</span> for completing this game with a score of <span style="color: green;">${currentScore}</span>!`;
 }
-
 function closePopup() {
   overlay.style.display = "none";
   popupDialog.style.display = "none";
 }
-
 generateResult.addEventListener("click", showPopup);
 closeButton.addEventListener("click", closePopup);
-
 overlay.addEventListener("click", closePopup);
-
 // Function to hide leaderboard
-
 function hideLeaderboard() {
   if (leaderboard) {
     if (
@@ -398,3 +410,4 @@ document.getElementById("restart-btn").addEventListener("click", restartQuiz);
 window.onload = function () {
   loadQuizState();
 };
+
