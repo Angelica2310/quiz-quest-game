@@ -159,7 +159,6 @@ function displayQuestion(question) {
   questionCounter.textContent = `Question ${currentQuestionIndex + 1}/10`;
 
   startTimer();
-
 }
 
 // Set up the hint button listener only once
@@ -218,13 +217,12 @@ function handleAnswerSelection(e, correctAnswer) {
     nextButton.style.display = "none";
   }
 
-
   // End quiz if lives are 0 or all questions are answered
   if (lives === 0 || currentQuestionIndex === 9) {
     stopTimer();
     endQuiz();
   }
-  
+
   saveQuizState();
 }
 
@@ -244,7 +242,6 @@ nextButton.addEventListener("click", () => {
 
 // End the quiz
 function endQuiz() {
-
   if (time <= 0) {
     leaderboardButton.style.display = "none";
     quizScreen.style.display = "none";
@@ -281,21 +278,22 @@ async function getScore() {
   for (let i = 0; i < Math.min(5, board.length); i++) {
     const name = board[i].name;
     const score = board[i].score;
-    const scoreDiv = document.createElement("div");
-    scoreDiv.classList.add("score-div");
-    const p = document.createElement("p");
-    console.log(p);
-    p.textContent = `${name}: ${score}`;
+    if (score !== null && score !== 0) {
+      const scoreDiv = document.createElement("div");
+      scoreDiv.classList.add("score-div");
+      const p = document.createElement("p");
+      console.log(p);
+      p.textContent = `${name}: ${score}`;
 
-    scoreDiv.appendChild(p);
-    leaderboard.appendChild(scoreDiv);
+      scoreDiv.appendChild(p);
+      leaderboard.appendChild(scoreDiv);
+    }
   }
 }
 getScore();
 
 const p = document.createElement("p");
 p.id = "score-message";
-
 
 // Function to handle username submission
 const username = document.getElementById("username");
@@ -362,8 +360,7 @@ leaderboardButton.addEventListener("click", hideLeaderboard);
 
 // Restart the quiz with fresh state
 async function restartQuiz() {
-  
-  // Update leaderboard 
+  // Update leaderboard
   const newScore = currentScore;
   const storeObj = { score: newScore };
   currentScore = storeObj;
@@ -376,8 +373,8 @@ async function restartQuiz() {
       headers: { "Content-Type": "application/json" },
     }
   );
-  
-  localStorage.clear(); 
+
+  localStorage.clear();
   currentQuestionIndex = 0;
   questionText.textContent = "";
   hintDisplay.textContent = "";
@@ -401,4 +398,3 @@ document.getElementById("restart-btn").addEventListener("click", restartQuiz);
 window.onload = function () {
   loadQuizState();
 };
-
