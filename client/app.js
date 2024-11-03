@@ -234,6 +234,9 @@ function handleAnswerSelection(e, correctAnswer) {
     stopTimer();
     endQuiz();
   }
+
+  saveQuizState();
+
 }
 
 // Move to the next question
@@ -289,12 +292,17 @@ async function getScore() {
   for (let i = 0; i < Math.min(5, board.length); i++) {
     const name = board[i].name;
     const score = board[i].score;
-    if (score !== null || score !== 0) {
+
+    if (score !== null && score !== 0) {
       const scoreDiv = document.createElement("div");
       scoreDiv.classList.add("score-div");
       const p = document.createElement("p");
       console.log(p);
+
+    
+
       p.innerHTML = `<strong>${name}</strong>: ${score}`;
+
 
       scoreDiv.appendChild(p);
       leaderboard.appendChild(scoreDiv);
@@ -306,22 +314,6 @@ getScore();
 const p = document.createElement("p");
 p.id = "score-message";
 
-// Restart the quiz and update score to database
-restartButton.addEventListener("click", async function () {
-  const newScore = currentScore;
-  const storeObj = { score: newScore };
-  currentScore = storeObj;
-  console.log(currentScore);
-  const data = await fetch(
-    `https://quiz-quest-game-server.onrender.com/leaderboard/${currentID.id}`,
-    {
-      method: "PUT",
-      body: JSON.stringify(storeObj),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
-  startQuiz();
-});
 // Function to handle username submission
 const username = document.getElementById("username");
 const nameForm = document.getElementById("name-form");
@@ -377,3 +369,45 @@ function hideLeaderboard() {
   }
 }
 leaderboardButton.addEventListener("click", hideLeaderboard);
+
+// Restart the quiz with fresh state
+async function restartQuiz() {
+  // Update leaderboard
+  const newScore = currentScore;
+  const storeObj = { score: newScore };
+  currentScore = storeObj;
+  console.log(currentScore);
+  const data = await fetch(
+    `http://localhost:8080/leaderboard/${currentID.id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(storeObj),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  localStorage.clear();
+  currentQuestionIndex = 0;
+  questionText.textContent = "";
+  hintDisplay.textContent = "";
+  fiftyFiftyUsed = false;
+  audienceUsed = false;
+  fiftyFiftyButton.disabled = false;
+  audienceButton.disabled = false;
+  questionCounter.textContent = "";
+  answerOptions.innerHTML = "";
+
+  // Hide end screen and show start screen
+  endScreen.style.display = "none";
+  startScreen.style.display = "block";
+  quizScreen.style.display = "none";
+}
+
+// Restart the quiz
+document.getElementById("restart-btn").addEventListener("click", restartQuiz);
+
+// Load state on page load
+window.onload = function () {
+  loadQuizState();
+};
+

@@ -12,7 +12,7 @@ body {
   justify-content: space-evenly;
   align-items: center;
   min-height: 100vh;
-  background-color: #f4f4f9;
+  /* background-color: #f4f4f9; */
   color: white;
 }
 
@@ -389,6 +389,7 @@ ul {
     border-radius: 8px;
     text-align: center;
     transition: transform 0.3s ease;
+    backdrop-filter: blur(20px);
   }
 
   #answer-options {
